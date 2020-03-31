@@ -2,6 +2,8 @@
 
 import 'source-map-support/register';
 
+import * as _ from 'lodash';
+
 import * as Yargs from 'yargs';
 import { Argv } from 'yargs';
 
@@ -12,7 +14,6 @@ import * as Chalk from 'chalk';
 import * as Zod from 'zod';
 
 import * as App from '.';
-
 
 const argv = (Yargs)
     .env('SERVER')
@@ -26,7 +27,7 @@ const argv = (Yargs)
         default: 8080,
         description: 'Port to listen on'
     })
-    .option('url', {
+    .option('nucleus', {
         string: true,
         required: true,
         description: 'Backend ZMQ service bus URL'
@@ -35,16 +36,21 @@ const argv = (Yargs)
         alias: 'authorized-app',
         string: true,
         array: true,
+        default: [],
         coerce: (value) => {
             const apps = Zod.array(Zod.string()).parse(value);
 
-            return apps.map(app => {
-                const [ name, key ] = Zod.tuple([ Zod.string(), Zod.string() ]).parse(app.split(':', 2));
+            return _.flatMap(apps, app => {
+                const items = app.split(' ');
 
-                return {
-                    name,
-                    key
-                };
+                return items.map(app => {
+                    const [ name, key ] = Zod.tuple([ Zod.string(), Zod.string() ]).parse(app.split(':', 2));
+
+                    return {
+                        name,
+                        key
+                    };
+                });
             });
         },
         description: 'Authorized application keys'
@@ -58,7 +64,7 @@ const argv = (Yargs)
 const OPTIONS_SCHEMA = Zod.object({
     hostname: Zod.string(),
     port: Zod.number(),
-    url: Zod.string(),
+    nucleus: Zod.string(),
     authorizedApps: Zod.array(Zod.object({
         name: Zod.string(),
         key: Zod.string()
@@ -67,9 +73,15 @@ const OPTIONS_SCHEMA = Zod.object({
 
 (async () => {
     const options = OPTIONS_SCHEMA.parse(argv);
+    console.log(options)
 
     console.log(Chalk.gray('Initializing server...'));
-    const server = await App.createServer(options);
+    const server = await App.createServer({
+        hostname: options.hostname,
+        port: options.port,
+        url: options.nucleus,
+        authorizedApps: options.authorizedApps
+    });
 
     server.on('error', (err) => {
         console.log(Chalk.red(err.message));
