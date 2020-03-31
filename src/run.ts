@@ -73,7 +73,6 @@ const OPTIONS_SCHEMA = Zod.object({
 
 (async () => {
     const options = OPTIONS_SCHEMA.parse(argv);
-    console.log(options)
 
     console.log(Chalk.gray('Initializing server...'));
     const server = await App.createServer({
