@@ -84,6 +84,7 @@ const OPTIONS_SCHEMA = Zod.object({
 
     server.on('error', (err) => {
         console.log(Chalk.red(err.message));
+        console.log(err.stack);
     }).on('listening', () => {
         console.log(Chalk.cyan(`Server "${server.name}" listening on ${server.hostname}:${server.port}`));
     }).on('requestHandled', (ctx) => {

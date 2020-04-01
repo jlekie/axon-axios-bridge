@@ -84,6 +84,8 @@ export class ForwarderRouter extends ARouter {
             const message = new Axon.TransportMessage(payload, new Axon.VolatileTransportMetadata(metadata));
 
             await transport.send(message);
+
+            ctx.status = 200;
         });
         router.post(`/receive`, async (ctx, next) => {
             const message = await transport.receive();
@@ -95,6 +97,7 @@ export class ForwarderRouter extends ARouter {
                     data: frame.data.toString('base64')
                 }))
             };
+            ctx.status = 200;
         });
         router.post(`/send-tagged`, async (ctx, next) => {
             const messageId = Zod.string().parse(ctx.request.query.mid);
@@ -106,6 +109,8 @@ export class ForwarderRouter extends ARouter {
             const message = new Axon.TransportMessage(payload, new Axon.VolatileTransportMetadata(metadata));
 
             await transport.sendTagged(messageId, message);
+
+            ctx.status = 200;
         });
         router.post(`/receive-tagged`, async (ctx, next) => {
             const messageId = Zod.string().parse(ctx.request.query.mid);
@@ -118,6 +123,7 @@ export class ForwarderRouter extends ARouter {
                     data: frame.data.toString('base64')
                 }))
             };
+            ctx.status = 200;
         });
 
         return router;
