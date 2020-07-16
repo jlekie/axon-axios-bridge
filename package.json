@@ -1,6 +1,6 @@
 {
   "name": "@jlekie/axon-axios-bridge",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Joe Lekie",
@@ -28,8 +28,8 @@
     "typescript": "3.7.2"
   },
   "dependencies": {
-    "@jlekie/axon": "1.0.0-alpha.1",
-    "@jlekie/axon-zeromq": "1.0.0-alpha.1",
+    "@jlekie/axon": "1.0.0-alpha.3",
+    "@jlekie/axon-zeromq": "1.0.0-alpha.3",
     "bluebird": "3.7.2",
     "chalk": "3.0.0",
     "faker": "4.1.0",
